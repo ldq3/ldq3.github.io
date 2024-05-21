@@ -20,25 +20,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="技术分享、日常记录、哲思">
-<meta property="og:type" content="website">
-<meta property="og:title" content="言成的博客">
-<meta property="og:url" content="http://example.com/index.html">
+    <meta name="description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES  Embassy：  Embassy Documentation 中文版  记录第一周5.20：  概览了 Rust 异步编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目实习记录：基于协程的异步操作系统&#x2F;驱动">
+<meta property="og:url" content="http://example.com/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/index.html">
 <meta property="og:site_name" content="言成的博客">
-<meta property="og:description" content="技术分享、日常记录、哲思">
+<meta property="og:description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES  Embassy：  Embassy Documentation 中文版  记录第一周5.20：  概览了 Rust 异步编程">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-05-20T06:03:34.000Z">
+<meta property="article:modified_time" content="2024-05-21T02:25:36.103Z">
 <meta property="article:author" content="言成">
+<meta property="article:tag" content="Record">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/","path":"2024/05/20/基于协程的异步操作系统或驱动/","title":"项目实习记录：基于协程的异步操作系统/驱动"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>言成的博客</title>
+<title>项目实习记录：基于协程的异步操作系统/驱动 | 言成的博客</title>
   
 
 
@@ -71,7 +74,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">言成的博客</h1>
+      <p class="site-title">言成的博客</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">理解和表达</p>
@@ -98,7 +101,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -111,6 +114,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99"><span class="nav-number">1.</span> <span class="nav-text">学习资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E5%91%A8"><span class="nav-number">2.1.</span> <span class="nav-text">第一周</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -145,16 +149,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -168,13 +173,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 言成的博客">
+      <meta itemprop="name" content="项目实习记录：基于协程的异步操作系统/驱动 | 言成的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/" class="post-title-link" itemprop="url">项目实习记录：基于协程的异步操作系统/驱动</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          项目实习记录：基于协程的异步操作系统/驱动
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -203,8 +208,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>项目目标</strong>：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能</p>
+    <div class="post-body" itemprop="articleBody"><p><strong>项目目标</strong>：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能</p>
 <h1 id="学习资料"><a href="#学习资料" class="headerlink" title="学习资料"></a>学习资料</h1><ul>
 <li><a target="_blank" rel="noopener" href="https://meeting.tencent.com/v2/cloud-record/share?id=73e9c1fc-eb38-425f-9594-d4809bb1ea94&from=3&record_type=2">2024春夏季开源OS训练营三阶段启动会</a>，密码：0519，时间戳：<code>52: 50</code></li>
 </ul>
@@ -225,7 +229,6 @@
 </ul>
 <p><strong>5.21</strong>：</p>
 
-      
     </div>
 
     
@@ -233,115 +236,25 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-tags">
+              <a href="/tags/Record/" rel="tag"># Record</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/04/05/Workspace/" rel="prev" title="VSCode 中的工作区实现">
+                  <i class="fa fa-angle-left"></i> VSCode 中的工作区实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/05/Workspace/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="言成">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="言成的博客">
-      <meta itemprop="description" content="技术分享、日常记录、哲思">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 言成的博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/04/05/Workspace/" class="post-title-link" itemprop="url">VSCode 中的工作区实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-04-05 15:32:24" itemprop="dateCreated datePublished" datetime="2024-04-05T15:32:24+08:00">2024-04-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-20 21:50:32" itemprop="dateModified" datetime="2024-05-20T21:50:32+08:00">2024-05-20</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Workspace 保存了你在 VSCode 中工作中定义的配置信息</p>
-<p>但是 VSCode 的 Workspace 在实现上有一些可能违反直觉的点</p>
-<p>工作区的插件开关信息被存储在用户目录下的 <code>AppData\Roaming\Code\User\workspaceStorage</code>，该路径下的每一个子目录对应一个工作区</p>
-<p>一个工作区对应一个窗口</p>
-<blockquote>
-<p>[!info]- 文件夹、项目和目录<br>在本文中我混用了 <code>文件夹</code>、<code>项目</code>、<code>目录</code> 这三个名词，你不需要区分它们，因为他们在本文中的含义确实是相同的，你应该知道他们是什么意思</p>
-</blockquote>
-<h1 id="实验：文件夹和工作区的关系"><a href="#实验：文件夹和工作区的关系" class="headerlink" title="实验：文件夹和工作区的关系"></a>实验：文件夹和工作区的关系</h1><p>用 VSCode 打开一个新窗口，然后用系统的资源管理器导航至 <code>workspaceStorage</code> 目录下，我们可以发现 VSCode 为我们新建了一个有较短的由纯数字构成的名字的目录，在我这里是 <code>1710835214590</code></p>
-<p>我们创建一个新项目 <code>workspace_test</code>，并在 VSCode 中打开该文件夹，发现 VSCode 为我们新建了一个有较长的由数字和小写字母混合的名字的目录，在我这里是 <code>8ebf92b503dc18000e9034cb55a79129</code></p>
-<blockquote>
-<p>[!猜测] 这里的 8ebf92b503dc18000e9034cb55a79129 看起来像是某种哈希值？</p>
-</blockquote>
-<p>在打开的窗口中使某个插件在工作区可用，发现 VSCode 为我们修改了文件夹 <code>8ebf92b503dc18000e9034cb55a79129</code></p>
-<p>接下来我们关闭 VSCode，回到资源管理器下，可以发现目录 <code>1710835214590</code> 自动被清除了</p>
-<p>再次打开 VSCode，之前关闭的内容又出现了，这次我们从这个窗口打开一个新窗口，发现 VSCode 创建了一个新目录 <code>1710836187029</code></p>
-<p>尝试从新窗口打开 <code>workspace_test</code>，我们回到原来的窗口</p>
-<h1 id="结论：文件夹和工作区的关系"><a href="#结论：文件夹和工作区的关系" class="headerlink" title="结论：文件夹和工作区的关系"></a>结论：文件夹和工作区的关系</h1><p>在 VSCode 中，当我们打开一个没有任何文件夹的新窗口时，VSCode 会在用户目录的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 路径下创建一个13位长的以纯数字命名的目录</p>
-<p>当我们第一次打开一个文件夹时，VSCode 会自动为这个文件夹创建一个匿名工作区，该工作区的相关数据被存储在用户目录的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 路径下的一个32位长以数字和小写字母混合命名的目录中，并将文件夹和该工作区关联</p>
-<p>当我们在 VSCode 中打开一个我们之前已经打开过的文件夹时，VSCode 会打开该文件夹关联的工作区</p>
-<blockquote>
-<p>[!问题]- 工作区查找机制<br>我并没有在这里探索</p>
-</blockquote>
-<h1 id="实验：多项目工作区、保存工作区"><a href="#实验：多项目工作区、保存工作区" class="headerlink" title="实验：多项目工作区、保存工作区"></a>实验：多项目工作区、保存工作区</h1><p>在这个实验项目的基础上，我们选择复制工作区，可以发现复制出的工作区并未保存原工作区插件的开关信息，而在资源管理器中看到出现新目录 <code>58e7a03118d1c2a2a93f67ee5125638d</code>，且新目录中的 json 文件内容指向用户文件夹下的<code>AppData/Roaming/Code/Workspaces/1710837051534/workspace.json</code></p>
-<p>关闭复制的工作区并且不保存，发现 <code>AppData/Roaming/Code/Workspaces/1710837051534/workspace.json</code> 被清除，但<code>58e7a03118d1c2a2a93f67ee5125638d</code> 被保留</p>
-<p>再次复制工作区，出现新目录<code>\9b42dd16e515b30b2964c635257ed403</code>， 且新目录中的 json 文件内容指向用户文件夹下的 <code>AppData/Roaming/Code/Workspaces/1710837918492/workspace.json</code></p>
-<p>在工作区使能插件，这次我们将工作区保存为文件，然后再从文件中打开工作区，创建了新目录，但没有原来的插件使能信息</p>
-<h1 id="结论：VSCode-中的文件夹和工作区模型"><a href="#结论：VSCode-中的文件夹和工作区模型" class="headerlink" title="结论：VSCode 中的文件夹和工作区模型"></a>结论：VSCode 中的文件夹和工作区模型</h1><p>VSCode 将工作区信息保存在用户目录下的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 目录下，但这些目录并不是面向用户的</p>
-<p>VSCode 会自动清除用户目录下 <code>AppData/Roaming/Code/Workspaces</code> 中的内容</p>
-<h1 id="方法论"><a href="#方法论" class="headerlink" title="方法论"></a>方法论</h1><h1 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h1><p>我们的数据很难真正属于我们自己，这是一个令人沮丧的事实</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
