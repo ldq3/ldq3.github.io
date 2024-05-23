@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50 操作系统专题训练课，其中的部分内容  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES exploring async basics with rust 中文版  Embassy">
+    <meta name="description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50 操作系统专题训练课，其中的部分内容  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES exploring async basics with rust 中文版 The Wake">
 <meta property="og:type" content="article">
 <meta property="og:title" content="项目实习记录：基于协程的异步操作系统&#x2F;驱动">
 <meta property="og:url" content="http://example.com/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/index.html">
 <meta property="og:site_name" content="言成的博客">
-<meta property="og:description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50 操作系统专题训练课，其中的部分内容  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES exploring async basics with rust 中文版  Embassy">
+<meta property="og:description" content="项目目标：利用 Rust 语言的异步机制应用到操作系统内核，改善内核的并发性能 学习资料 2024春夏季开源OS训练营三阶段启动会，密码：0519，时间戳：52: 50 操作系统专题训练课，其中的部分内容  Rust 异步编程：  Rust Course: 异步编程 200行代码讲透RUST FUTURES exploring async basics with rust 中文版 The Wake">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-05-20T06:03:34.000Z">
-<meta property="article:modified_time" content="2024-05-22T11:27:54.852Z">
+<meta property="article:modified_time" content="2024-05-23T07:43:29.531Z">
 <meta property="article:author" content="言成">
 <meta name="twitter:card" content="summary">
 
@@ -88,7 +88,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-时间线"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-分类"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-时间线"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-info fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
@@ -203,7 +203,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-22 19:27:54" itemprop="dateModified" datetime="2024-05-22T19:27:54+08:00">2024-05-22</time>
+      <time title="修改时间：2024-05-23 15:43:29" itemprop="dateModified" datetime="2024-05-23T15:43:29+08:00">2024-05-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -231,9 +231,10 @@
 </ul>
 <p>Rust 异步编程：</p>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://course.rs/advance/async/intro.html">Rust Course: 异步编程</a></li>
+<li><a target="_blank" rel="noopener" href="https://course.rs/advance/async/intro.html/">Rust Course: 异步编程</a></li>
 <li><a target="_blank" rel="noopener" href="https://stevenbai.top/rust/futures_explained_in_200_lines_of_rust/">200行代码讲透RUST FUTURES</a></li>
-<li><a target="_blank" rel="noopener" href="https://rust-chinese-translation.github.io/exploring-async-basics-with-rust_zh/introduction.html">exploring async basics with rust 中文版</a></li>
+<li><a target="_blank" rel="noopener" href="https://rust-chinese-translation.github.io/exploring-async-basics-with-rust_zh/introduction.html/">exploring async basics with rust 中文版</a></li>
+<li><a target="_blank" rel="noopener" href="https://boats.gitlab.io/blog/post/wakers-i/">The Waker API I: what does a waker do?</a></li>
 </ul>
 <p>Embassy：</p>
 <ul>
@@ -257,6 +258,11 @@
 <li>看了很多资料，看得脑袋晕晕的😵‍💫</li>
 <li>感觉 Waker 的实现有点触碰到我对 Rust 的认知边界了</li>
 <li>下一步继续看 Waker 的实现机制，再看一看代码</li>
+</ul>
+<p><strong>5.23</strong>：</p>
+<ul>
+<li>把 Rust 的异步编程摸了个大概，有了个模糊的模型</li>
+<li>整理一下思路，写写笔记和示例</li>
 </ul>
 
     </div>
