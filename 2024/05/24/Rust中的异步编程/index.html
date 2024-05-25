@@ -20,27 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Workspace 保存了你在 VSCode 中工作中定义的配置信息 但是 VSCode 的 Workspace 在实现上有一些可能违反直觉的点">
+    <meta name="description" content="Rust 选择了 async&#x2F;await 作为其异步编程模型。async&#x2F;await 模型性能高，还能支持底层编程，它的问题是内部实现机制有些复杂，理解和使用起来也不够简单。 在心智模型一节中，我们将完全抛开 Rust 去理解 async&#x2F;await 模型。在实现一节，我们介绍在 Rust 中实现该模型时，必须引入的一些复杂性。在使用方法一节中，介绍如何在 Rust">
 <meta property="og:type" content="article">
-<meta property="og:title" content="VSCode 中的工作区实现">
-<meta property="og:url" content="http://example.com/2024/04/05/Workspace/index.html">
+<meta property="og:title" content="Rust 中的异步编程">
+<meta property="og:url" content="http://example.com/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="言成的博客">
-<meta property="og:description" content="Workspace 保存了你在 VSCode 中工作中定义的配置信息 但是 VSCode 的 Workspace 在实现上有一些可能违反直觉的点">
+<meta property="og:description" content="Rust 选择了 async&#x2F;await 作为其异步编程模型。async&#x2F;await 模型性能高，还能支持底层编程，它的问题是内部实现机制有些复杂，理解和使用起来也不够简单。 在心智模型一节中，我们将完全抛开 Rust 去理解 async&#x2F;await 模型。在实现一节，我们介绍在 Rust 中实现该模型时，必须引入的一些复杂性。在使用方法一节中，介绍如何在 Rust">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-04-05T07:32:24.537Z">
-<meta property="article:modified_time" content="2024-05-22T03:49:46.907Z">
+<meta property="article:published_time" content="2024-05-24T09:24:52.103Z">
+<meta property="article:modified_time" content="2024-05-25T05:56:15.207Z">
 <meta property="article:author" content="言成">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2024/04/05/Workspace/">
+<link rel="canonical" href="http://example.com/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/04/05/Workspace/","path":"2024/04/05/Workspace/","title":"VSCode 中的工作区实现"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/","path":"2024/05/24/Rust中的异步编程/","title":"Rust 中的异步编程"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>VSCode 中的工作区实现 | 言成的博客</title>
+<title>Rust 中的异步编程 | 言成的博客</title>
   
 
 
@@ -113,7 +113,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%EF%BC%9A%E6%96%87%E4%BB%B6%E5%A4%B9%E5%92%8C%E5%B7%A5%E4%BD%9C%E5%8C%BA%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">实验：文件夹和工作区的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA%EF%BC%9A%E6%96%87%E4%BB%B6%E5%A4%B9%E5%92%8C%E5%B7%A5%E4%BD%9C%E5%8C%BA%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">结论：文件夹和工作区的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%EF%BC%9A%E5%A4%9A%E9%A1%B9%E7%9B%AE%E5%B7%A5%E4%BD%9C%E5%8C%BA%E3%80%81%E4%BF%9D%E5%AD%98%E5%B7%A5%E4%BD%9C%E5%8C%BA"><span class="nav-number">3.</span> <span class="nav-text">实验：多项目工作区、保存工作区</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA%EF%BC%9AVSCode-%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%B9%E5%92%8C%E5%B7%A5%E4%BD%9C%E5%8C%BA%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">结论：VSCode 中的文件夹和工作区模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%AE%BA"><span class="nav-number">5.</span> <span class="nav-text">方法论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%84%9F%E6%83%B3"><span class="nav-number">6.</span> <span class="nav-text">感想</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%83%E6%99%BA%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">心智模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Executor"><span class="nav-number">1.1.</span> <span class="nav-text">Executor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reactor"><span class="nav-number">1.2.</span> <span class="nav-text">Reactor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Waker"><span class="nav-number">1.3.</span> <span class="nav-text">Waker</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">使用方法</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -167,7 +167,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/05/Workspace/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -180,12 +180,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="VSCode 中的工作区实现 | 言成的博客">
+      <meta itemprop="name" content="Rust 中的异步编程 | 言成的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          VSCode 中的工作区实现
+          Rust 中的异步编程
         </h1>
 
         <div class="post-meta-container">
@@ -196,14 +196,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-04-05 15:32:24" itemprop="dateCreated datePublished" datetime="2024-04-05T15:32:24+08:00">2024-04-05</time>
+      <time title="创建时间：2024-05-24 17:24:52" itemprop="dateCreated datePublished" datetime="2024-05-24T17:24:52+08:00">2024-05-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-22 11:49:46" itemprop="dateModified" datetime="2024-05-22T11:49:46+08:00">2024-05-22</time>
+      <time title="修改时间：2024-05-25 13:56:15" itemprop="dateModified" datetime="2024-05-25T13:56:15+08:00">2024-05-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -224,36 +224,27 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>Workspace 保存了你在 VSCode 中工作中定义的配置信息</p>
-<p>但是 VSCode 的 Workspace 在实现上有一些可能违反直觉的点</p>
+    <div class="post-body" itemprop="articleBody"><p>Rust 选择了 async&#x2F;await 作为其异步编程模型。async&#x2F;await 模型性能高，还能支持底层编程，它的问题是内部实现机制有些复杂，理解和使用起来也不够简单。</p>
+<p>在心智模型一节中，我们将完全抛开 Rust 去理解 async&#x2F;await 模型。在实现一节，我们介绍在 Rust 中实现该模型时，必须引入的一些复杂性。在使用方法一节中，介绍如何在 Rust 中使用异步编程。</p>
 <span id="more"></span>
-<p>工作区的插件开关信息被存储在用户目录下的 <code>AppData\Roaming\Code\User\workspaceStorage</code>，该路径下的每一个子目录对应一个工作区</p>
-<p>一个工作区对应一个窗口</p>
-<blockquote>
-<p>[!info]- 文件夹、项目和目录<br>在本文中我混用了 <code>文件夹</code>、<code>项目</code>、<code>目录</code> 这三个名词，你不需要区分它们，因为他们在本文中的含义确实是相同的，你应该知道他们是什么意思</p>
-</blockquote>
-<h1 id="实验：文件夹和工作区的关系"><a href="#实验：文件夹和工作区的关系" class="headerlink" title="实验：文件夹和工作区的关系"></a>实验：文件夹和工作区的关系</h1><p>用 VSCode 打开一个新窗口，然后用系统的资源管理器导航至 <code>workspaceStorage</code> 目录下，我们可以发现 VSCode 为我们新建了一个有较短的由纯数字构成的名字的目录，在我这里是 <code>1710835214590</code></p>
-<p>我们创建一个新项目 <code>workspace_test</code>，并在 VSCode 中打开该文件夹，发现 VSCode 为我们新建了一个有较长的由数字和小写字母混合的名字的目录，在我这里是 <code>8ebf92b503dc18000e9034cb55a79129</code></p>
-<blockquote>
-<p>[!猜测] 这里的 8ebf92b503dc18000e9034cb55a79129 看起来像是某种哈希值？</p>
-</blockquote>
-<p>在打开的窗口中使某个插件在工作区可用，发现 VSCode 为我们修改了文件夹 <code>8ebf92b503dc18000e9034cb55a79129</code></p>
-<p>接下来我们关闭 VSCode，回到资源管理器下，可以发现目录 <code>1710835214590</code> 自动被清除了</p>
-<p>再次打开 VSCode，之前关闭的内容又出现了，这次我们从这个窗口打开一个新窗口，发现 VSCode 创建了一个新目录 <code>1710836187029</code></p>
-<p>尝试从新窗口打开 <code>workspace_test</code>，我们回到原来的窗口</p>
-<h1 id="结论：文件夹和工作区的关系"><a href="#结论：文件夹和工作区的关系" class="headerlink" title="结论：文件夹和工作区的关系"></a>结论：文件夹和工作区的关系</h1><p>在 VSCode 中，当我们打开一个没有任何文件夹的新窗口时，VSCode 会在用户目录的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 路径下创建一个13位长的以纯数字命名的目录</p>
-<p>当我们第一次打开一个文件夹时，VSCode 会自动为这个文件夹创建一个匿名工作区，该工作区的相关数据被存储在用户目录的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 路径下的一个32位长以数字和小写字母混合命名的目录中，并将文件夹和该工作区关联</p>
-<p>当我们在 VSCode 中打开一个我们之前已经打开过的文件夹时，VSCode 会打开该文件夹关联的工作区</p>
-<blockquote>
-<p>[!问题]- 工作区查找机制<br>我并没有在这里探索</p>
-</blockquote>
-<h1 id="实验：多项目工作区、保存工作区"><a href="#实验：多项目工作区、保存工作区" class="headerlink" title="实验：多项目工作区、保存工作区"></a>实验：多项目工作区、保存工作区</h1><p>在这个实验项目的基础上，我们选择复制工作区，可以发现复制出的工作区并未保存原工作区插件的开关信息，而在资源管理器中看到出现新目录 <code>58e7a03118d1c2a2a93f67ee5125638d</code>，且新目录中的 json 文件内容指向用户文件夹下的<code>AppData/Roaming/Code/Workspaces/1710837051534/workspace.json</code></p>
-<p>关闭复制的工作区并且不保存，发现 <code>AppData/Roaming/Code/Workspaces/1710837051534/workspace.json</code> 被清除，但<code>58e7a03118d1c2a2a93f67ee5125638d</code> 被保留</p>
-<p>再次复制工作区，出现新目录<code>\9b42dd16e515b30b2964c635257ed403</code>， 且新目录中的 json 文件内容指向用户文件夹下的 <code>AppData/Roaming/Code/Workspaces/1710837918492/workspace.json</code></p>
-<p>在工作区使能插件，这次我们将工作区保存为文件，然后再从文件中打开工作区，创建了新目录，但没有原来的插件使能信息</p>
-<h1 id="结论：VSCode-中的文件夹和工作区模型"><a href="#结论：VSCode-中的文件夹和工作区模型" class="headerlink" title="结论：VSCode 中的文件夹和工作区模型"></a>结论：VSCode 中的文件夹和工作区模型</h1><p>VSCode 将工作区信息保存在用户目录下的 <code>AppData\Roaming\Code\User\workspaceStorage</code> 目录下，但这些目录并不是面向用户的</p>
-<p>VSCode 会自动清除用户目录下 <code>AppData/Roaming/Code/Workspaces</code> 中的内容</p>
-<h1 id="方法论"><a href="#方法论" class="headerlink" title="方法论"></a>方法论</h1><h1 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h1><p>我们的数据很难真正属于我们自己，这是一个令人沮丧的事实</p>
+<h1 id="心智模型"><a href="#心智模型" class="headerlink" title="心智模型"></a>心智模型</h1><p>一个问题被解决可能需要经历多个阶段，一个阶段到下一个阶段之间需要等待特定外部消息的到来。可以为每一个等待的点创建一个状态，还有一个最终状态。于是一个完整的任务被拆分成几个阶段、几个中间状态、一个最终状态，称被拆分后的任务为一个 Future。</p>
+<p>现在来看 Futures 运行的工作流模型，这个模型包括两个异步的部分：Executor 和 Reactor，还有一个联系二者的结构 Waker。</p>
+<h2 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h2><p>如果还有 Future 未完成，Executor 会从就绪队列中取出一个 Future，然后开始以下三步：</p>
+<ol>
+<li>从之前的 Future 状态开始执行，完成一个阶段到下一个状态</li>
+<li>通过 Waker 向 Reactor 注册等待的消息，然后挂起这个 Future</li>
+<li>检查消息队列，将可以执行的 FUture 加入就绪队列</li>
+</ol>
+<h2 id="Reactor"><a href="#Reactor" class="headerlink" title="Reactor"></a>Reactor</h2><p>Reactor 需要做的事情很简单，就是当 Future 感兴趣的消息通过 Waker 发送给 Executor 就好了。</p>
+<h2 id="Waker"><a href="#Waker" class="headerlink" title="Waker"></a>Waker</h2><p>有了 Waker，你可以组合不同的 Executor 和 Reactor。</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>Reactor 是通过操作系统提供的 IO 多路复用机制来完成，例如 Linux 中的 epoll，FreeBSD 和 macOS 中的 kqueue ，Windows 中的 IOCP, Fuchisa中的 ports 等，可以通过 Rust 的跨平台包 mio 来使用。</p>
+<p>Waker 的实现需要考虑很多因素</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://boats.gitlab.io/blog/post/wakers-i/">The Waker API I: what does a waker do?</a></li>
+<li><a target="_blank" rel="noopener" href="https://boats.gitlab.io/blog/post/wakers-ii/">The Waker API II: waking across threads</a></li>
+</ul>
+<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><p>Rust 提供了关键字 async 可以将一个程序块转化为一个 Future，这个过程发生在编译时，所以没有额外的运行时开销。在一个被 async 标记的程序块内，可以在一个 Future 后使用 <code>.await</code>，这样可以将一些 Futures 嵌套组合成一个大 Future。使用 .await 的方式的这些内部 Future 是同步的，如果想异步的话，可以使用 futures 包提供的一些宏。</p>
+<p>Tokio 库中提供了一些 Executor 和 Reactor。</p>
 
     </div>
 
@@ -267,11 +258,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" rel="prev" title="异步编程概述">
+                  <i class="fa fa-angle-left"></i> 异步编程概述
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/" rel="next" title="项目实习记录：基于协程的异步操作系统/驱动">
-                  项目实习记录：基于协程的异步操作系统/驱动 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
