@@ -20,29 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。 有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的2024 春夏开源操作系统训练营之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。 另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯">
+    <meta name="description" content="Embassy 是一个基于 Rust 语言，为嵌入式系统开发设计的异步运行时库，其官方文档《Embassy Book》中给出的所有示例都是基于真实的物理环境，没有任何基于模拟器的内容。 事实上，也很少有相关的工作基于 QEMU 使用 Embassy。确实，几十或者一百多块钱就能买到很好的开发板，而且商家还提供了很好的售后服务和工具链支持，这可比自己折腾模拟器要舒适多了。 话虽如此，但还是有一些理由">
 <meta property="og:type" content="article">
-<meta property="og:title" content="异步编程概述">
-<meta property="og:url" content="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:title" content="基于 QEMU 使用 Embassy">
+<meta property="og:url" content="http://example.com/2024/06/15/embassy%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="言成的博客">
-<meta property="og:description" content="编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。 有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的2024 春夏开源操作系统训练营之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。 另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯">
+<meta property="og:description" content="Embassy 是一个基于 Rust 语言，为嵌入式系统开发设计的异步运行时库，其官方文档《Embassy Book》中给出的所有示例都是基于真实的物理环境，没有任何基于模拟器的内容。 事实上，也很少有相关的工作基于 QEMU 使用 Embassy。确实，几十或者一百多块钱就能买到很好的开发板，而且商家还提供了很好的售后服务和工具链支持，这可比自己折腾模拟器要舒适多了。 话虽如此，但还是有一些理由">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/resource/subproblem_tree.png">
-<meta property="article:published_time" content="2024-05-24T07:58:17.318Z">
-<meta property="article:modified_time" content="2024-05-25T01:56:09.419Z">
+<meta property="article:published_time" content="2024-06-15T03:29:23.034Z">
+<meta property="article:modified_time" content="2024-06-15T06:38:40.121Z">
 <meta property="article:author" content="言成">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/resource/subproblem_tree.png">
 
 
-<link rel="canonical" href="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
+<link rel="canonical" href="http://example.com/2024/06/15/embassy%E6%80%BB%E7%BB%93/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/","path":"2024/05/24/异步编程/","title":"异步编程概述"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/06/15/embassy%E6%80%BB%E7%BB%93/","path":"2024/06/15/embassy总结/","title":"基于 QEMU 使用 Embassy"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>异步编程概述 | 言成的博客</title>
+<title>基于 QEMU 使用 Embassy | 言成的博客</title>
   
 
 
@@ -102,7 +100,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -115,7 +113,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">同步和异步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="nav-number">2.</span> <span class="nav-text">并行和并发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">异步模型</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -174,7 +171,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/15/embassy%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -187,12 +184,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="异步编程概述 | 言成的博客">
+      <meta itemprop="name" content="基于 QEMU 使用 Embassy | 言成的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          异步编程概述
+          基于 QEMU 使用 Embassy
         </h1>
 
         <div class="post-meta-container">
@@ -202,15 +199,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2024-05-24 15:58:17" itemprop="dateCreated datePublished" datetime="2024-05-24T15:58:17+08:00">2024-05-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-25 09:56:09" itemprop="dateModified" datetime="2024-05-25T09:56:09+08:00">2024-05-25</time>
+      <time title="创建时间：2024-06-15 11:29:23 / 修改时间：14:38:40" itemprop="dateCreated datePublished" datetime="2024-06-15T11:29:23+08:00">2024-06-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -231,25 +222,27 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p><img src="/../resource/subproblem_tree.png" alt="subproblem"></p>
-<p>编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。</p>
-<p>有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的<a target="_blank" rel="noopener" href="https://opencamp.cn/os2edu/camp/2024spring">2024 春夏开源操作系统训练营</a>之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。</p>
-<p>另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯一的要求就是修够学分，我可以选择先修专业选修课1，再修专业选修课2，或者反过来也行，又或者我同时搞定它们。</p>
-<span id="more"></span>
-<h1 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h1><p>发现了吗？在上述的第一种情况中，子问题之间相互关联，我们只能按部就班。而在第二种情况下，因为子问题间相互独立，所以我们可以完全不关心以何种顺序去解决它们。</p>
-<p>通过这一观察，我们抽象出两类关系。<code>同步</code>指一系列问题或操作之间相互关联，<code>异步</code>指一系列问题或操作之间相互独立。</p>
-<p>现在我们可以说上述的第二种情况中，各个子问题之间是异步的，还可以说子问题和父问题之间是同步的。“同步”和“异步”在字面上说明在这里我们关心的是问题的解决步骤。</p>
-<h1 id="并行和并发"><a href="#并行和并发" class="headerlink" title="并行和并发"></a>并行和并发</h1><p>我们可以完全不关心以何种顺序去解决异步的多个问题，甚至如果我们把这些问题交给不同的人去解决，我们能更快地得到所有子问题的解，进而更快地解决父问题。理想很美好，但停下来想想，就会发现出现了新的问题——我们该怎么知道子问题的解都准备好了？因为把问题交给不同的人去解决，现在我们失去了对这些问题的主导，所以必须增加一个通信的过程来了解问题的解决情况。</p>
-<p>作为一个插曲，我们可以抽象出一个新的概念，并行指分配不同的物理资源去解决异步的多个问题。</p>
-<p>回到我们的讨论上，将所有的子问题交给其他不同的人去做，那我现在干啥，毕竟还没有所有子问题的解？去打会儿游戏吧，如果闲下来什么都不干会有浪费时间的负罪感哈哈，原谅我不想去帮忙解决这些麻烦的子问题。</p>
-<p>好了，现在我们又得到了一个抽象，并发指用同一物理资源去交叉解决多个问题。</p>
-<p>并行可以让任务完成得更快，此时我们更关心时间上的效率，但需要投入更多的资源。并发可以更有效地利用物理资源，然而仅仅是并发并不能更快地解决问题。</p>
-<h1 id="异步模型"><a href="#异步模型" class="headerlink" title="异步模型"></a>异步模型</h1><p>是时候真正讨论异步编程了。我们已经有了足够动机去让一个程序变得异步，更快地解决问题，或是更有效地利用物理资源，或是两者都有。但是我们该怎么做？当真正谈到实现的时候总要考虑更多恼人的细节。</p>
-<p>我将向你解释我所理解的三级异步模型：进程（Process）-&gt; 线程（Thread）-&gt; 协程（Coroutine）。注意，这里的 <code>协程</code> 是一个比事实上的协程更广泛的概念，选择它只是为了和 <code>进程</code>、<code>线程</code> 对仗。</p>
-<p>进程是通用的对完整的运行时程序的抽象，它包括了程序运行所需要的一切，数据、指令、调用栈……</p>
-<p>线程是通用的对运行时程序主体部分的抽象，相比于进程，它仅包含程序需要怎么做的部分，即控制流。线程是在进程基础上分离出了控制流，所以现在一个进程可以拥有多个线程和一个所有线程共享的内存空间。</p>
-<p>进程和线程是代码层面上通用的抽象，这意味着它们可以作为一个基础提供给所有程序使用，现在几乎所有操作系统都支持进程和线程。然而通用也是有代价的，那就是，为了满足所有程序的需求分配的物理资源，对于某些程序来说就显得多余和浪费了。</p>
-<p>协程在代码层面上并不是通用的，所以它不是完全由操作系统提供，而是主要由程序语言提供。由用户代码控制，可以更精确的使用资源，代价是程序本身会变得更庞大。</p>
+    <div class="post-body" itemprop="articleBody"><p>Embassy 是一个基于 Rust 语言，为嵌入式系统开发设计的异步运行时库，其官方文档<a target="_blank" rel="noopener" href="https://embassy.dev/book/index.html#_introduction">《Embassy Book》</a>中给出的所有示例都是基于真实的物理环境，没有任何基于模拟器的内容。</p>
+<p>事实上，也很少有相关的工作基于 QEMU 使用 Embassy。确实，几十或者一百多块钱就能买到很好的开发板，而且商家还提供了很好的售后服务和工具链支持，这可比自己折腾模拟器要舒适多了。</p>
+<p>话虽如此，但还是有一些理由让我们选择使用模拟器来做嵌入式的开发。这篇文章的主要目的就是整理和总结一些基于 QEMU 使用 Embassy 的过程中可能用到的资料和工具链。</p>
+<ul>
+<li><p>Rust 嵌入式开发的入门资料：<a target="_blank" rel="noopener" href="https://docs.rust-embedded.org/book/">《The Embedded Rust Book》</a>，以及它的中文版本：<a target="_blank" rel="noopener" href="https://logiase.github.io/The-Embedded-Rust-Book-CN/">《嵌入式 Rust 之书》</a></p>
+</li>
+<li><p>QEMU 官方支持模拟部分的开发板：<a target="_blank" rel="noopener" href="https://www.qemu.org/docs/master/system/targets.html">QEMU System Emulator Targets</a></p>
+</li>
+</ul>
+<p>官方 QEMU 的优点是最稳定，各种体系的处理器的仿真都支持。但 QEMU 的主要目标是支持高性能处理器的模拟仿真，单片机支持型号较少，而且最主要的问题是缺少了很多外围设备，而这些外围设备在 Embassy 的使用过程中可能是必须的，可以参考<a href="embassy%E8%AE%B0%E5%BD%95.md">《使用 QEMU 运行 Embassy 示例》</a>。总结起来，Embassy 程序会有一个 boot 过程检查并初始化目标开发板中的一些外围设备，如果缺失这些外围设备的话，程序就会陷入一个无止尽的循环中。以 <a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中 <code>examples/stm32f1</code> 项目下的 <code>blinky.rs</code> 为例，第 12 行代码：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">p</span> = embassy_stm32::<span class="title function_ invoke__">init</span>(<span class="built_in">Default</span>::<span class="title function_ invoke__">default</span>());</span><br></pre></td></tr></table></figure>
+<p>即进行了芯片和外围设备的初始化工作。</p>
+<p>因为 QEMU 本身是开源的，所以除 QEMU 官方外，很多第三方扩展支持了更多的开发板，有的支持了更多的外围设备仿真：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://xpack.github.io/dev-tools/qemu-arm/">xPack QEMU Arm</a>，缺点是只支持 stm32，且在 2022 年宣布可能后续被移除，不再被推荐使用，而且有些选项是独有的，和官方不兼容；</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/beckus/qemu_stm32/">qemu_stm32</a>，暂时没有更多的尝试，可能是一个比较好的选择；</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://gitee.com/RT-Thread-Studio-Mirror/sdk-debugger-qemu/">sdk-debugger-qemu</a>，这是一个国产开源嵌入式系统 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/">RT-Thread</a> 生态里的一个 QEMU 版本，它只是增加了几个芯片的支持，看起来不是一个很好的选择。</p>
+</li>
+</ul>
 
     </div>
 
@@ -263,14 +256,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/" rel="prev" title="项目实习记录：基于协程的异步操作系统/驱动">
-                  <i class="fa fa-angle-left"></i> 项目实习记录：基于协程的异步操作系统/驱动
+                <a href="/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/" rel="prev" title="目标文件处理工具">
+                  <i class="fa fa-angle-left"></i> 目标文件处理工具
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" rel="next" title="Rust 中的异步编程">
-                  Rust 中的异步编程 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>

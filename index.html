@@ -123,7 +123,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -131,6 +131,11 @@
           <a href="/categories/">
         <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -163,7 +168,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/12/embassy/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/15/embassy%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -181,7 +186,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/06/12/embassy/" class="post-title-link" itemprop="url">使用 QEMU 运行 Embassy 示例</a>
+          <a href="/2024/06/15/embassy%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">基于 QEMU 使用 Embassy</a>
         </h2>
 
         <div class="post-meta-container">
@@ -193,7 +198,236 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2024-06-12 20:34:43 / 修改时间：20:36:21" itemprop="dateCreated datePublished" datetime="2024-06-12T20:34:43+08:00">2024-06-12</time>
+      <time title="创建时间：2024-06-15 11:29:23 / 修改时间：14:38:40" itemprop="dateCreated datePublished" datetime="2024-06-15T11:29:23+08:00">2024-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Embassy 是一个基于 Rust 语言，为嵌入式系统开发设计的异步运行时库，其官方文档<a target="_blank" rel="noopener" href="https://embassy.dev/book/index.html#_introduction">《Embassy Book》</a>中给出的所有示例都是基于真实的物理环境，没有任何基于模拟器的内容。</p>
+<p>事实上，也很少有相关的工作基于 QEMU 使用 Embassy。确实，几十或者一百多块钱就能买到很好的开发板，而且商家还提供了很好的售后服务和工具链支持，这可比自己折腾模拟器要舒适多了。</p>
+<p>话虽如此，但还是有一些理由让我们选择使用模拟器来做嵌入式的开发。这篇文章的主要目的就是整理和总结一些基于 QEMU 使用 Embassy 的过程中可能用到的资料和工具链。</p>
+<ul>
+<li><p>Rust 嵌入式开发的入门资料：<a target="_blank" rel="noopener" href="https://docs.rust-embedded.org/book/">《The Embedded Rust Book》</a>，以及它的中文版本：<a target="_blank" rel="noopener" href="https://logiase.github.io/The-Embedded-Rust-Book-CN/">《嵌入式 Rust 之书》</a></p>
+</li>
+<li><p>QEMU 官方支持模拟部分的开发板：<a target="_blank" rel="noopener" href="https://www.qemu.org/docs/master/system/targets.html">QEMU System Emulator Targets</a></p>
+</li>
+</ul>
+<p>官方 QEMU 的优点是最稳定，各种体系的处理器的仿真都支持。但 QEMU 的主要目标是支持高性能处理器的模拟仿真，单片机支持型号较少，而且最主要的问题是缺少了很多外围设备，而这些外围设备在 Embassy 的使用过程中可能是必须的，可以参考<a href="embassy%E8%AE%B0%E5%BD%95.md">《使用 QEMU 运行 Embassy 示例》</a>。总结起来，Embassy 程序会有一个 boot 过程检查并初始化目标开发板中的一些外围设备，如果缺失这些外围设备的话，程序就会陷入一个无止尽的循环中。以 <a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中 <code>examples/stm32f1</code> 项目下的 <code>blinky.rs</code> 为例，第 12 行代码：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">p</span> = embassy_stm32::<span class="title function_ invoke__">init</span>(<span class="built_in">Default</span>::<span class="title function_ invoke__">default</span>());</span><br></pre></td></tr></table></figure>
+<p>即进行了芯片和外围设备的初始化工作。</p>
+<p>因为 QEMU 本身是开源的，所以除 QEMU 官方外，很多第三方扩展支持了更多的开发板，有的支持了更多的外围设备仿真：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://xpack.github.io/dev-tools/qemu-arm/">xPack QEMU Arm</a>，缺点是只支持 stm32，且在 2022 年宣布可能后续被移除，不再被推荐使用，而且有些选项是独有的，和官方不兼容；</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/beckus/qemu_stm32/">qemu_stm32</a>，暂时没有更多的尝试，可能是一个比较好的选择；</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://gitee.com/RT-Thread-Studio-Mirror/sdk-debugger-qemu/">sdk-debugger-qemu</a>，这是一个国产开源嵌入式系统 <a target="_blank" rel="noopener" href="https://www.rt-thread.org/">RT-Thread</a> 生态里的一个 QEMU 版本，它只是增加了几个芯片的支持，看起来不是一个很好的选择。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="言成">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="言成的博客">
+      <meta itemprop="description" content="技术分享、记录、哲思">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 言成的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">目标文件处理工具</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-06-15 10:05:30 / 修改时间：11:03:14" itemprop="dateCreated datePublished" datetime="2024-06-15T10:05:30+08:00">2024-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>一个可执行目标文件，本身包含一条条二进制指令，所以其最基本的依赖是<strong>指令集体系结构</strong>（<strong>I</strong>nstruction <strong>S</strong>et <strong>A</strong>rchitecture, ISA），ISA 本身还受一些硬件标准的影响，如端序</p>
+<p>调用外部操作，这个分为两个方面，操作系统和运行时的动态库，动态库的接口标准</p>
+<p>一般用目标三元组（Target Triplet）来描述一个软件运行的目标平台</p>
+<ul>
+<li>处理器架构（ISA）</li>
+<li>操作系统（Operating System, OS）</li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi/2456882#2456882">应用二进制接口</a>（Application Binary Interface, ABI）标准：运行时库和操作系统提供的系统调用的接口标准</li>
+</ul>
+<p>例如</p>
+<ul>
+<li><code>arm-none-eabi</code>：<ul>
+<li>ISA：<code>arm</code></li>
+<li>OS：<code>none</code>，指没有操作系统的裸机</li>
+<li>ABI：<code>eabi</code>，指嵌入式二进制接口</li>
+</ul>
+</li>
+<li><code>riscv64gc-unknown-none-elf</code>：<ul>
+<li>ISA：<code>riscv64gc-unknown</code>，其中 riscv 指的 RISC-V，gc 指 RISC-V 架构的 GC 扩展，unknown 指未知的 CPU 厂商</li>
+<li>OS：<code>none</code></li>
+<li>ABI：<code>elf</code>，指没有任何系统调用的封装支持，但可以生成 ELF 格式的执行程序</li>
+</ul>
+</li>
+</ul>
+<p>交叉（cross），有一类程序，他的作用就是处理其它程序，于是这里就存在两个平台，host 和 target，在主机（host）平台上编译能在目标（target）平台运行的程序，还有构建这类程序的平台 build</p>
+<h1 id="ISA"><a href="#ISA" class="headerlink" title="ISA"></a>ISA</h1><p>在 CPU 架构中，可能包含小端序（little-endian, el），大端序（big-endian, eb）</p>
+<h1 id="OS"><a href="#OS" class="headerlink" title="OS"></a>OS</h1><p>none</p>
+<p>linux</p>
+<h1 id="运行时库"><a href="#运行时库" class="headerlink" title="运行时库"></a>运行时库</h1><p>嵌入式应用二进制接口（Embedded Application Binary Interface, EABI）</p>
+<p>GNU libc 封装了 Linux 系统调用，并提供 POSIX 接口为主的函数库</p>
+<p>硬件浮点（Hard Float, HF）表示使用硬件浮点单元 (FPU) 来进行浮点运算，而不是软件实现的浮点运算，从而提高性能</p>
+<h1 id="工具链"><a href="#工具链" class="headerlink" title="工具链"></a>工具链</h1><p>Binutils：Binutils 是 GNU 工具之一，它包括链接器、汇编器和其它一些工具，它是二进制代码的处理和维护工具，<a target="_blank" rel="noopener" href="https://sourceware.org/binutils/">GMU Binutils</a></p>
+<p>GCC</p>
+<p>GLibc</p>
+<p>GDB</p>
+<p>QEMU</p>
+<p>查看可执行文件的格式：file<br>查看可执行文件的内容：rust-readobj<br>查看可执行文件的指令：rust-objdump<br>修改可执行文件：rust-objcopy</p>
+<h1 id="获取工具链"><a href="#获取工具链" class="headerlink" title="获取工具链"></a>获取工具链</h1><p>想要获取交叉工具链，可以直接检索下载对应的工具链，也可以选择从工具的源码制作，这个步骤同样有一些工具</p>
+<p>ARM：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads">Arm GNU Toolchain</a></li>
+</ul>
+<p>RISC-V</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sifive/freedom-tools/releases">预编译的工具链</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/riscv-collab/riscv-gnu-toolchain">riscv-collab&#x2F;riscv-gnu-toolchain: GNU toolchain for RISC-V, including GCC</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/12/embassy%E8%AE%B0%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="言成">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="言成的博客">
+      <meta itemprop="description" content="技术分享、记录、哲思">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 言成的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/06/12/embassy%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">使用 QEMU 运行 Embassy 示例</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-06-12 20:34:43" itemprop="dateCreated datePublished" datetime="2024-06-12T20:34:43+08:00">2024-06-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-06-15 12:16:52" itemprop="dateModified" datetime="2024-06-15T12:16:52+08:00">2024-06-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -215,9 +449,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="1"><a href="#1" class="headerlink" title="1"></a>1</h1><p><a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中的 <code>examples/stm32f1</code></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo build --bin blinky --release</span><br></pre></td></tr></table></figure>
-
+          <h1 id="1"><a href="#1" class="headerlink" title="1"></a>1</h1><p>项目：<a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中的 <code>examples/stm32f1</code></p>
+<p>board：<code>stm32vldiscovery</code></p>
+<p>microcontroler：<code>stm32f100rbt6</code></p>
+<p>项目用到的芯片是 <code>stm32f103c8</code>，但这里模拟的芯片是 <code>stm32f100rbt6</code></p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">	-M stm32vldiscovery \</span><br><span class="line">	-kernel target/thumbv7m-none-eabi/release/blinky \</span><br><span class="line">	-s -S</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arm-none-eabi-gdb \</span><br><span class="line">    -ex <span class="string">&#x27;file target/thumbv7m-none-eabi/release/blinky&#x27;</span> \</span><br><span class="line">    -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span></span><br></pre></td></tr></table></figure>
@@ -226,7 +461,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Program received signal SIGINT, Interrupt.</span><br><span class="line">cortex_m_rt::HardFault_ (warning: Could not fetch required XPSR content.  Further unwinding is impossible.</span><br><span class="line">ef=0x20004fe0) at src/lib.rs:1046</span><br><span class="line">1046        loop &#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>似乎是某种初始化过程？但这个循环一直跳不出来，还是 <code>cortex_m_rt::HardFault_</code> 指代发生了某种错误？</p>
-<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><p><a target="_blank" rel="noopener" href="https://github.com/KMSorSMS/stm32f401_embassy">stm32f401_embassy</a></p>
+<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><p>项目：<a target="_blank" rel="noopener" href="https://github.com/KMSorSMS/stm32f401_embassy">stm32f401_embassy</a></p>
+<p>board：<code>netduinoplus2</code></p>
+<p>microcontroler：<code>stm32f405rgt6</code></p>
+<p>项目用到的芯片是 <code>stm32f401</code>，但这里模拟的芯片是 <code>stm32f405rgt6</code></p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">	-M netduinoplus2 \</span><br><span class="line">	-kernel target/thumbv7em-none-eabi/release/stm32f401_embassy \</span><br><span class="line">	-s -S</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arm-none-eabi-gdb \</span><br><span class="line">    -ex <span class="string">&#x27;file target/thumbv7em-none-eabi/release/stm32f401_embass&#x27;</span> \</span><br><span class="line">    -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span></span><br></pre></td></tr></table></figure>
@@ -235,6 +473,28 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Program received signal SIGINT, Interrupt.</span><br><span class="line">0x0800369c in embassy_stm32::rcc::_version::init (config=...) at src/rcc/f247.rs:136</span><br><span class="line">136             PWR.cr1().modify(|w| w.set_vos(crate::pac::pwr::vals::Vos::SCALE1));</span><br></pre></td></tr></table></figure>
 
 <p>似乎也是某种初始化过程？循环也是一直跳不出来。</p>
+<h1 id="3"><a href="#3" class="headerlink" title="3"></a>3</h1><p>项目：<a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中的 <code>examples/stm32l4</code></p>
+<p>board：<code>b-l475e-iot01a</code></p>
+<p>microcontroler：<code>stm32l475vg</code></p>
+<p><code>b-l475e-iot01a</code> 这块板子在 qemu 9.0.0 以上的官方版本中有支持，而且其 MCU <code>stm32l475vg</code> 在 embassy-stm32 中也有支持</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm \</span><br><span class="line">	-M b-l475e-iot01a \</span><br><span class="line">	-kernel target/thumbv7em-none-eabi/release/blinky \</span><br><span class="line">	-s -S</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arm-none-eabi-gdb \</span><br><span class="line">    -ex <span class="string">&#x27;file target/thumbv7em-none-eabi/debug/blinky&#x27;</span> \</span><br><span class="line">    -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>芯片型号都已经完全对上了，初始化还是过不去，难绷</p>
+<h1 id="4"><a href="#4" class="headerlink" title="4"></a>4</h1><p>项目：<a target="_blank" rel="noopener" href="https://github.com/embassy-rs/embassy">embassy</a> 中的 <code>examples/stm32f1</code></p>
+<p>board：<code>BluePill</code></p>
+<p>microcontroler：<code>stm32f103</code></p>
+<p>这一次尝试参考了博客：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/asmer/p/16813129.html">QEMU 仿真模拟 STM32F103 开发板</a>。其中用到了一个经第三方修改后的 QEMU 版本：<a target="_blank" rel="noopener" href="https://xpack.github.io/dev-tools/qemu-arm/">xPack QEMU Arm</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-gnuarmeclipse \</span><br><span class="line">	-board BluePill \</span><br><span class="line">	-image target/thumbv7m-none-eabi/debug/blinky</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arm-none-eabi-gdb \</span><br><span class="line">    -ex <span class="string">&#x27;file target/thumbv7m-none-eabi/release/blinky&#x27;</span> \</span><br><span class="line">    -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以通过初始化过程，程序可以运行</p>
+<p>gdb 连不上，错误信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">warning: Can not parse XML target description; XML support was disabled at compile time</span><br><span class="line">Truncated register 18 in remote &#x27;g&#x27; packet</span><br></pre></td></tr></table></figure>
+
+<p>通过 apt 包管理器下载了 gdb-multiarch，使用 gdb-multiarch 可以正常调试</p>
 
       
     </div>

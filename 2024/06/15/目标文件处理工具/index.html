@@ -20,29 +20,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。 有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的2024 春夏开源操作系统训练营之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。 另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯">
+    <meta name="description" content="一个可执行目标文件，本身包含一条条二进制指令，所以其最基本的依赖是指令集体系结构（Instruction Set Architecture, ISA），ISA 本身还受一些硬件标准的影响，如端序 调用外部操作，这个分为两个方面，操作系统和运行时的动态库，动态库的接口标准 一般用目标三元组（Target Triplet）来描述一个软件运行的目标平台  处理器架构（ISA） 操作系统（Operatin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="异步编程概述">
-<meta property="og:url" content="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:title" content="目标文件处理工具">
+<meta property="og:url" content="http://example.com/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="言成的博客">
-<meta property="og:description" content="编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。 有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的2024 春夏开源操作系统训练营之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。 另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯">
+<meta property="og:description" content="一个可执行目标文件，本身包含一条条二进制指令，所以其最基本的依赖是指令集体系结构（Instruction Set Architecture, ISA），ISA 本身还受一些硬件标准的影响，如端序 调用外部操作，这个分为两个方面，操作系统和运行时的动态库，动态库的接口标准 一般用目标三元组（Target Triplet）来描述一个软件运行的目标平台  处理器架构（ISA） 操作系统（Operatin">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/resource/subproblem_tree.png">
-<meta property="article:published_time" content="2024-05-24T07:58:17.318Z">
-<meta property="article:modified_time" content="2024-05-25T01:56:09.419Z">
+<meta property="article:published_time" content="2024-06-15T02:05:30.385Z">
+<meta property="article:modified_time" content="2024-06-15T03:03:14.872Z">
 <meta property="article:author" content="言成">
+<meta property="article:tag" content="TODO">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/resource/subproblem_tree.png">
 
 
-<link rel="canonical" href="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
+<link rel="canonical" href="http://example.com/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/","path":"2024/05/24/异步编程/","title":"异步编程概述"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/","path":"2024/06/15/目标文件处理工具/","title":"目标文件处理工具"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>异步编程概述 | 言成的博客</title>
+<title>目标文件处理工具 | 言成的博客</title>
   
 
 
@@ -115,7 +114,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">同步和异步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="nav-number">2.</span> <span class="nav-text">并行和并发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">异步模型</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ISA"><span class="nav-number">1.</span> <span class="nav-text">ISA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OS"><span class="nav-number">2.</span> <span class="nav-text">OS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">运行时库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E9%93%BE"><span class="nav-number">4.</span> <span class="nav-text">工具链</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B7%A5%E5%85%B7%E9%93%BE"><span class="nav-number">5.</span> <span class="nav-text">获取工具链</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -174,7 +173,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/24/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/15/%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -187,12 +186,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="异步编程概述 | 言成的博客">
+      <meta itemprop="name" content="目标文件处理工具 | 言成的博客">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          异步编程概述
+          目标文件处理工具
         </h1>
 
         <div class="post-meta-container">
@@ -202,15 +201,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2024-05-24 15:58:17" itemprop="dateCreated datePublished" datetime="2024-05-24T15:58:17+08:00">2024-05-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-05-25 09:56:09" itemprop="dateModified" datetime="2024-05-25T09:56:09+08:00">2024-05-25</time>
+      <time title="创建时间：2024-06-15 10:05:30 / 修改时间：11:03:14" itemprop="dateCreated datePublished" datetime="2024-06-15T10:05:30+08:00">2024-06-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -231,25 +224,52 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p><img src="/../resource/subproblem_tree.png" alt="subproblem"></p>
-<p>编程即是描述解决问题的步骤，其核心在于如何理解“问题”本身。</p>
-<p>有时候我们遇到的问题，解决起来是一环扣一环的。如果我想顺利完成我的<a target="_blank" rel="noopener" href="https://opencamp.cn/os2edu/camp/2024spring">2024 春夏开源操作系统训练营</a>之旅，就必须先通过第一阶段，再通过第二阶段，最后完成第三阶段的任务。</p>
-<p>另外一种情况是，当问题变得复杂时，我们可以尝试把一个大的父问题分解成相互独立的子问题，只要子问题的结果都有了，就可以用这些子问题的解来解决父问题。如果我想要顺利毕业，唯一的要求就是修够学分，我可以选择先修专业选修课1，再修专业选修课2，或者反过来也行，又或者我同时搞定它们。</p>
-<span id="more"></span>
-<h1 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h1><p>发现了吗？在上述的第一种情况中，子问题之间相互关联，我们只能按部就班。而在第二种情况下，因为子问题间相互独立，所以我们可以完全不关心以何种顺序去解决它们。</p>
-<p>通过这一观察，我们抽象出两类关系。<code>同步</code>指一系列问题或操作之间相互关联，<code>异步</code>指一系列问题或操作之间相互独立。</p>
-<p>现在我们可以说上述的第二种情况中，各个子问题之间是异步的，还可以说子问题和父问题之间是同步的。“同步”和“异步”在字面上说明在这里我们关心的是问题的解决步骤。</p>
-<h1 id="并行和并发"><a href="#并行和并发" class="headerlink" title="并行和并发"></a>并行和并发</h1><p>我们可以完全不关心以何种顺序去解决异步的多个问题，甚至如果我们把这些问题交给不同的人去解决，我们能更快地得到所有子问题的解，进而更快地解决父问题。理想很美好，但停下来想想，就会发现出现了新的问题——我们该怎么知道子问题的解都准备好了？因为把问题交给不同的人去解决，现在我们失去了对这些问题的主导，所以必须增加一个通信的过程来了解问题的解决情况。</p>
-<p>作为一个插曲，我们可以抽象出一个新的概念，并行指分配不同的物理资源去解决异步的多个问题。</p>
-<p>回到我们的讨论上，将所有的子问题交给其他不同的人去做，那我现在干啥，毕竟还没有所有子问题的解？去打会儿游戏吧，如果闲下来什么都不干会有浪费时间的负罪感哈哈，原谅我不想去帮忙解决这些麻烦的子问题。</p>
-<p>好了，现在我们又得到了一个抽象，并发指用同一物理资源去交叉解决多个问题。</p>
-<p>并行可以让任务完成得更快，此时我们更关心时间上的效率，但需要投入更多的资源。并发可以更有效地利用物理资源，然而仅仅是并发并不能更快地解决问题。</p>
-<h1 id="异步模型"><a href="#异步模型" class="headerlink" title="异步模型"></a>异步模型</h1><p>是时候真正讨论异步编程了。我们已经有了足够动机去让一个程序变得异步，更快地解决问题，或是更有效地利用物理资源，或是两者都有。但是我们该怎么做？当真正谈到实现的时候总要考虑更多恼人的细节。</p>
-<p>我将向你解释我所理解的三级异步模型：进程（Process）-&gt; 线程（Thread）-&gt; 协程（Coroutine）。注意，这里的 <code>协程</code> 是一个比事实上的协程更广泛的概念，选择它只是为了和 <code>进程</code>、<code>线程</code> 对仗。</p>
-<p>进程是通用的对完整的运行时程序的抽象，它包括了程序运行所需要的一切，数据、指令、调用栈……</p>
-<p>线程是通用的对运行时程序主体部分的抽象，相比于进程，它仅包含程序需要怎么做的部分，即控制流。线程是在进程基础上分离出了控制流，所以现在一个进程可以拥有多个线程和一个所有线程共享的内存空间。</p>
-<p>进程和线程是代码层面上通用的抽象，这意味着它们可以作为一个基础提供给所有程序使用，现在几乎所有操作系统都支持进程和线程。然而通用也是有代价的，那就是，为了满足所有程序的需求分配的物理资源，对于某些程序来说就显得多余和浪费了。</p>
-<p>协程在代码层面上并不是通用的，所以它不是完全由操作系统提供，而是主要由程序语言提供。由用户代码控制，可以更精确的使用资源，代价是程序本身会变得更庞大。</p>
+    <div class="post-body" itemprop="articleBody"><p>一个可执行目标文件，本身包含一条条二进制指令，所以其最基本的依赖是<strong>指令集体系结构</strong>（<strong>I</strong>nstruction <strong>S</strong>et <strong>A</strong>rchitecture, ISA），ISA 本身还受一些硬件标准的影响，如端序</p>
+<p>调用外部操作，这个分为两个方面，操作系统和运行时的动态库，动态库的接口标准</p>
+<p>一般用目标三元组（Target Triplet）来描述一个软件运行的目标平台</p>
+<ul>
+<li>处理器架构（ISA）</li>
+<li>操作系统（Operating System, OS）</li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi/2456882#2456882">应用二进制接口</a>（Application Binary Interface, ABI）标准：运行时库和操作系统提供的系统调用的接口标准</li>
+</ul>
+<p>例如</p>
+<ul>
+<li><code>arm-none-eabi</code>：<ul>
+<li>ISA：<code>arm</code></li>
+<li>OS：<code>none</code>，指没有操作系统的裸机</li>
+<li>ABI：<code>eabi</code>，指嵌入式二进制接口</li>
+</ul>
+</li>
+<li><code>riscv64gc-unknown-none-elf</code>：<ul>
+<li>ISA：<code>riscv64gc-unknown</code>，其中 riscv 指的 RISC-V，gc 指 RISC-V 架构的 GC 扩展，unknown 指未知的 CPU 厂商</li>
+<li>OS：<code>none</code></li>
+<li>ABI：<code>elf</code>，指没有任何系统调用的封装支持，但可以生成 ELF 格式的执行程序</li>
+</ul>
+</li>
+</ul>
+<p>交叉（cross），有一类程序，他的作用就是处理其它程序，于是这里就存在两个平台，host 和 target，在主机（host）平台上编译能在目标（target）平台运行的程序，还有构建这类程序的平台 build</p>
+<h1 id="ISA"><a href="#ISA" class="headerlink" title="ISA"></a>ISA</h1><p>在 CPU 架构中，可能包含小端序（little-endian, el），大端序（big-endian, eb）</p>
+<h1 id="OS"><a href="#OS" class="headerlink" title="OS"></a>OS</h1><p>none</p>
+<p>linux</p>
+<h1 id="运行时库"><a href="#运行时库" class="headerlink" title="运行时库"></a>运行时库</h1><p>嵌入式应用二进制接口（Embedded Application Binary Interface, EABI）</p>
+<p>GNU libc 封装了 Linux 系统调用，并提供 POSIX 接口为主的函数库</p>
+<p>硬件浮点（Hard Float, HF）表示使用硬件浮点单元 (FPU) 来进行浮点运算，而不是软件实现的浮点运算，从而提高性能</p>
+<h1 id="工具链"><a href="#工具链" class="headerlink" title="工具链"></a>工具链</h1><p>Binutils：Binutils 是 GNU 工具之一，它包括链接器、汇编器和其它一些工具，它是二进制代码的处理和维护工具，<a target="_blank" rel="noopener" href="https://sourceware.org/binutils/">GMU Binutils</a></p>
+<p>GCC</p>
+<p>GLibc</p>
+<p>GDB</p>
+<p>QEMU</p>
+<p>查看可执行文件的格式：file<br>查看可执行文件的内容：rust-readobj<br>查看可执行文件的指令：rust-objdump<br>修改可执行文件：rust-objcopy</p>
+<h1 id="获取工具链"><a href="#获取工具链" class="headerlink" title="获取工具链"></a>获取工具链</h1><p>想要获取交叉工具链，可以直接检索下载对应的工具链，也可以选择从工具的源码制作，这个步骤同样有一些工具</p>
+<p>ARM：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads">Arm GNU Toolchain</a></li>
+</ul>
+<p>RISC-V</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sifive/freedom-tools/releases">预编译的工具链</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/riscv-collab/riscv-gnu-toolchain">riscv-collab&#x2F;riscv-gnu-toolchain: GNU toolchain for RISC-V, including GCC</a></li>
+</ul>
 
     </div>
 
@@ -258,18 +278,21 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/TODO/" rel="tag"># TODO</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2024/05/20/%E5%9F%BA%E4%BA%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%88%96%E9%A9%B1%E5%8A%A8/" rel="prev" title="项目实习记录：基于协程的异步操作系统/驱动">
-                  <i class="fa fa-angle-left"></i> 项目实习记录：基于协程的异步操作系统/驱动
+                <a href="/2024/06/12/embassy%E8%AE%B0%E5%BD%95/" rel="prev" title="使用 QEMU 运行 Embassy 示例">
+                  <i class="fa fa-angle-left"></i> 使用 QEMU 运行 Embassy 示例
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/05/24/Rust%E4%B8%AD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" rel="next" title="Rust 中的异步编程">
-                  Rust 中的异步编程 <i class="fa fa-angle-right"></i>
+                <a href="/2024/06/15/embassy%E6%80%BB%E7%BB%93/" rel="next" title="基于 QEMU 使用 Embassy">
+                  基于 QEMU 使用 Embassy <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
